@@ -30,5 +30,8 @@ target_link_libraries(my_app linenoise ${LIBELFIN_PATH}/dwarf/libdwarf++.so ${LI
 
 add_dependencies(my_app libelfin linenoise)
 
+add_executable(hello example/hello.cpp)
+set_target_properties(hello
+        PROPERTIES COMPILE_FLAGS "-g -O0")
 
 
