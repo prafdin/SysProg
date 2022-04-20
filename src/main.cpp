@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <sstream>
 #include <iostream>
-#include "parser.h"
 
 #include "linenoise/linenoise.h"
 
@@ -83,12 +82,12 @@ void execute_debugee (const std::string& prog_name) {
 }
 
 int main(int argc, char* argv[]) {
-    ArgParser args(argc, argv);
-    if (!args.parse() || !args.fileExist()) {
-        return 1;
+    if (argc < 2) {
+        std::cerr << "Program name not specified";
+        return -1;
     }
 
-    auto prog = args.getProgName();
+    auto prog = argv[1];
 
     auto pid = fork();
     if (pid == 0) {
