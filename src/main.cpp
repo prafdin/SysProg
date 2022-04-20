@@ -8,7 +8,7 @@
 
 #include "linenoise/linenoise.h"
 
-#include "../include/debugger.hpp"
+#include "debugger.h"
 
 using namespace test;
 

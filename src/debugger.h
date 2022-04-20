@@ -6,7 +6,7 @@
 #include <linux/types.h>
 #include <unordered_map>
 
-#include "breakpoint.hpp"
+#include "breakpoint.h"
 
 namespace test {
     class debugger {
