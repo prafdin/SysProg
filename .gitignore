@@ -4,6 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # Project files
+lib/libelfin/dwarf/libdwarf++.pc
+lib/libelfin/elf/libelf++.pc
 lib/
 *.so
 CMakeCache.txt
