@@ -4,15 +4,12 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # Project files
-lib/libelfin/dwarf/libdwarf++.pc
-lib/libelfin/elf/libelf++.pc
 lib/
 *.so
-CMakeCache.txt
 CMakeFiles/
+*.cmake
 Makefile
-cmake_install.cmake
-*.pc
+CMakeCache.txt
 my_app
 
 # User-specific files
