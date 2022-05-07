@@ -1,9 +1,0 @@
-libdir=/home/valery/CLionProjects/SysProg/lib/libelfin/dwarf
-includedir=/home/valery/CLionProjects/SysProg/lib/libelfin/dwarf
-
-Name: libdwarf++
-Description: C++11 DWARF library
-Version: 
-Requires: libelf++ = 
-Libs: -L${libdir} -ldwarf++
-Cflags: -I${includedir}

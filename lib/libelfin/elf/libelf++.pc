@@ -1,8 +1,0 @@
-libdir=/home/valery/CLionProjects/SysProg/lib/libelfin/elf
-includedir=/home/valery/CLionProjects/SysProg/lib/libelfin/elf
-
-Name: libelf++
-Description: C++11 ELF library
-Version: 
-Libs: -L${libdir} -lelf++
-Cflags: -I${includedir}

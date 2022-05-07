@@ -11,7 +11,7 @@ file(GLOB_RECURSE APP_SRC
 
 add_executable(my_app ${APP_SRC})
 
-include_directories(include/)
+include_directories(include/ lib/)
 
 add_custom_target(
         libelfin
