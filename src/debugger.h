@@ -8,8 +8,8 @@
 #include <fcntl.h>
 
 #include "breakpoint.h"
-#include "libelfin/dwarf++.hh"
-#include "libelfin/elf++.hh"
+#include "libelfin/dwarf/dwarf++.hh"
+#include "libelfin/elf/elf++.hh"
 
 class debugger {
 public:
