@@ -5,7 +5,7 @@ SONAME = 0
 CXXFLAGS+=-g -O2 -Werror
 override CXXFLAGS+=-std=c++0x -Wall -fPIC
 
-all: libdwarf++.a libdwarf++.so.$(SONAME) libdwarf++.so libdwarf++.pc
+all: libdwarf++.a libdwarf++.so.$(SONAME) libdwarf++.so
 
 SRCS := dwarf.cc cursor.cc die.cc value.cc abbrev.cc \
 	expr.cc rangelist.cc line.cc attrs.cc \
