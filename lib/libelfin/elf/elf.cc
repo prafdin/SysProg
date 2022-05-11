@@ -167,10 +167,12 @@ elf::get_segment(unsigned index) const
 
 struct segment::impl {
         impl(const elf &f)
-                : f(f), data(nullptr) { }
+                : f(f) { }
 
         const elf f;
         Phdr<> hdr;
+        //  const char *name;
+        //  size_t name_len;
         const void *data;
 };
 

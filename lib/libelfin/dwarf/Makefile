@@ -9,7 +9,7 @@ all: libdwarf++.a libdwarf++.so.$(SONAME) libdwarf++.so libdwarf++.pc
 
 SRCS := dwarf.cc cursor.cc die.cc value.cc abbrev.cc \
 	expr.cc rangelist.cc line.cc attrs.cc \
-	die_str_map.cc elf.cc to_string.cc
+	die_str_map.cc elf.cc to_string.cc loclist.cc
 HDRS := dwarf++.hh data.hh internal.hh small_vector.hh ../elf/to_hex.hh
 CLEAN :=
 
@@ -60,14 +60,14 @@ CLEAN += libdwarf++.pc
 PREFIX?=/usr/local
 
 install: libdwarf++.a libdwarf++.so.$(SONAME) libdwarf++.so libdwarf++.pc
-	install -d $(DESTDIR)$(PREFIX)/lib/pkgconfig
-	install -t $(DESTDIR)$(PREFIX)/lib libdwarf++.a
-	install -t $(DESTDIR)$(PREFIX)/lib libdwarf++.so.$(SONAME)
-	install -t $(DESTDIR)$(PREFIX)/lib libdwarf++.so
-	install -d $(DESTDIR)$(PREFIX)/include/libelfin/dwarf
-	install -t $(DESTDIR)$(PREFIX)/include/libelfin/dwarf data.hh dwarf++.hh small_vector.hh
+	install -d $(PREFIX)/lib/pkgconfig
+	install -t $(PREFIX)/lib libdwarf++.a
+	install -t $(PREFIX)/lib libdwarf++.so.$(SONAME)
+	install -t $(PREFIX)/lib libdwarf++.so
+	install -d $(PREFIX)/include/libelfin/dwarf
+	install -t $(PREFIX)/include/libelfin/dwarf data.hh dwarf++.hh small_vector.hh
 	sed 's,^libdir=.*,libdir=$(PREFIX)/lib,;s,^includedir=.*,includedir=$(PREFIX)/include,' libdwarf++.pc \
-		> $(DESTDIR)$(PREFIX)/lib/pkgconfig/libdwarf++.pc
+		> $(PREFIX)/lib/pkgconfig/libdwarf++.pc
 
 clean:
 	rm -f $(CLEAN)
