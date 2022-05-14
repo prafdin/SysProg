@@ -1,9 +1,0 @@
-libdir=/home/evgeniy/kursach/lib/libelfin/dwarf
-includedir=/home/evgeniy/kursach/lib/libelfin/dwarf
-
-Name: libdwarf++
-Description: C++11 DWARF library
-Version: 0.1-47-gd1a9970
-Requires: libelf++ = 0.1-47-gd1a9970
-Libs: -L${libdir} -ldwarf++
-Cflags: -I${includedir}

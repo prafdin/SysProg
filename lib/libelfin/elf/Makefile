@@ -5,7 +5,7 @@ SONAME = 0
 CXXFLAGS+=-g -O2 -Werror
 override CXXFLAGS+=-std=c++0x -Wall -fPIC
 
-all: libelf++.a libelf++.so libelf++.so.$(SONAME) libelf++.pc
+all: libelf++.a libelf++.so libelf++.so.$(SONAME)
 
 SRCS := elf.cc mmap_loader.cc to_string.cc
 HDRS := elf++.hh data.hh common.hh to_hex.hh

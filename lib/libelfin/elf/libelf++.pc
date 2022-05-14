@@ -1,8 +1,0 @@
-libdir=/home/evgeniy/kursach/lib/libelfin/elf
-includedir=/home/evgeniy/kursach/lib/libelfin/elf
-
-Name: libelf++
-Description: C++11 ELF library
-Version: 0.1-47-gd1a9970
-Libs: -L${libdir} -lelf++
-Cflags: -I${includedir}
