@@ -8,8 +8,11 @@
 #include <fcntl.h>
 
 #include "breakpoint.h"
+#include "utility.h"
 #include "libelfin/dwarf/dwarf++.hh"
 #include "libelfin/elf/elf++.hh"
+
+
 
 class debugger {
 public:
@@ -25,9 +28,15 @@ public:
 
     void set_breakpoint_at_address(std::intptr_t addr);
 
+    void set_breakpoint_at_function(const std::string& name);
+
+    void set_breakpoint_at_source_line(const std::string& file, unsigned line);
+
     void dump_registers();
 
     void print_source(const std::string& file_name, unsigned line, unsigned n_lines_context=2);
+
+    auto lookup_symbol(const std::string& name) -> std::vector<symbol>;
 
     void single_step_instruction();
 
@@ -54,6 +63,7 @@ private:
     void step_over_breakpoint();
 
     void wait_for_signal();
+
     auto get_signal_info() -> siginfo_t;
 
     void handle_sigtrap(siginfo_t info);

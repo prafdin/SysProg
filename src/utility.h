@@ -4,6 +4,25 @@
 #include <unistd.h>
 
 #include "registers.h"
+#include "libelfin/elf/data.hh"
+
+enum class symbol_type {
+    notype,            // No type (e.g., absolute symbol)
+    object,            // Data object
+    func,              // Function entry point
+    section,           // Symbol is associated with a section
+    file,              // Source file associated with the
+};
+
+std::string to_string (symbol_type st);
+
+symbol_type to_symbol_type(elf::stt sym);
+
+struct symbol {
+    symbol_type type;
+    std::string name;
+    std::uintptr_t addr;
+};
 
 uint64_t get_register_value(pid_t pid, reg r);
 
