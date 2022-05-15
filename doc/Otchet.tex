@@ -2,6 +2,10 @@
 \usepackage[utf8]{inputenc}
 \usepackage[russianb]{babel}
 \usepackage{fontspec}
+\usepackage {titlesec}
+\titleformat{\chapter}{\thispagestyle{plain}\hyphenpenalty=10000\normalfont\huge\bfseries}{
+	\thechapter. }{0pt}{\Huge}
+\makeatother
 \setmainfont{Times  New Roman}
 \usepackage{vmargin}
 \usepackage{amsmath}
