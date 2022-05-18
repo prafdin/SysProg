@@ -318,14 +318,15 @@ void debugger::handle_command(const std::string& line) {
         if (is_prefix(args[1], "dump")) {
             dump_registers();
         }
-    }
-    else if (is_prefix(args[1], "read")) {
+        else if (is_prefix(args[1], "read")) {
         std::cout << get_register_value(m_pid, get_register_from_name(args[2])) << std::endl;
-    }
-    else if (is_prefix(args[1], "write")) {
+    	}
+    	else if (is_prefix(args[1], "write")) {
         std::string val {args[3], 2}; //assume 0xVAL
         set_register_value(m_pid, get_register_from_name(args[2]), std::stol(val, 0, 16));
+    	}
     }
+    
     else if(is_prefix(command, "memory")) {
         std::string addr {args[2], 2}; //assume 0xADDRESS
 
