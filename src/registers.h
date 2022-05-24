@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <string>
 #include <sys/ptrace.h>
-
+#include <array>
 
 enum class reg {
     rax, rbx, rcx, rdx,
