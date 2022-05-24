@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <sys/personality.h>
 #include <unistd.h>
+#include <vector>
 
 #include "registers.h"
 #include "libelfin/elf/data.hh"
