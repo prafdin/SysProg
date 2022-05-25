@@ -3,9 +3,15 @@
 \usepackage[russianb]{babel}
 \usepackage{fontspec}
 \usepackage {titlesec}
+\usepackage{tocloft}
+\setlength{\cftbeforetoctitleskip}{-1em}
 \titleformat{\chapter}{\thispagestyle{plain}\hyphenpenalty=10000\normalfont\huge\bfseries}{
 	\thechapter. }{0pt}{\Huge}
 \makeatother
+\makeatletter
+\renewcommand{\@makeschapterhead}[1]{\vspace{0pt}{\parindent=0pt \raggedright\normalfont\Huge\bfseries #1\par\nopagebreak\vspace{20 pt}}}
+\makeatother
+\titlespacing{\chapter}{0pt}{-1cm}{1.5cm}
 \setmainfont{Times  New Roman}
 \usepackage{vmargin}
 \usepackage{amsmath}
