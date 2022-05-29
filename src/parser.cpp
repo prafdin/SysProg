@@ -5,7 +5,7 @@
 
 using namespace std;
 
-ArgParser::ArgParser(int argc, char *argv[]) : _argc(argc), _argv(argv) {}
+
 
 string ArgParser::getProgName() {
     return _progName;

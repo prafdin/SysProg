@@ -3,6 +3,7 @@
 using namespace std;
 
 class ArgParser {
+    ArgParser(int argc, char *argv[]) : _argc(argc), _argv(argv) {}
     const char *opts = "hp:";
     string _progName; //name_prog
     int _argc;
@@ -13,8 +14,6 @@ class ArgParser {
     bool fileExist();
 
 public:
-    ArgParser(int argc, char **argv);
-
     bool parse();
 
     string getProgName();
