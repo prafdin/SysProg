@@ -26,7 +26,6 @@ struct reg_descriptor {
     std::string name;
 };
 
-//have a look in /usr/include/sys/user.h for how to lay this out
 static const std::array<reg_descriptor, n_registers> g_register_descriptors{{
                                                                                     {reg::r15, 15, "r15"},
                                                                                     {reg::r14, 14, "r14"},
