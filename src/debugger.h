@@ -13,7 +13,6 @@
 #include "libelfin/elf/elf++.hh"
 
 
-
 class debugger {
 public:
     debugger(std::string prog_name, pid_t pid)
@@ -28,15 +27,15 @@ public:
 
     void set_breakpoint_at_address(std::intptr_t addr);
 
-    void set_breakpoint_at_function(const std::string& name);
+    void set_breakpoint_at_function(const std::string &name);
 
-    void set_breakpoint_at_source_line(const std::string& file, unsigned line);
+    void set_breakpoint_at_source_line(const std::string &file, unsigned line);
 
     void dump_registers();
 
-    void print_source(const std::string& file_name, unsigned line, unsigned n_lines_context=2);
+    void print_source(const std::string &file_name, unsigned line, unsigned n_lines_context = 2);
 
-    auto lookup_symbol(const std::string& name) -> std::vector<symbol>;
+    auto lookup_symbol(const std::string &name) -> std::vector<symbol>;
 
     void single_step_instruction();
 
@@ -49,6 +48,7 @@ public:
     void step_out();
 
     void remove_breakpoint(std::intptr_t addr);
+
 private:
     void handle_command(const std::string &line);
 
@@ -69,10 +69,13 @@ private:
     void handle_sigtrap(siginfo_t info);
 
     void initialise_load_address();
+
     uint64_t offset_load_address(uint64_t addr);
+
     uint64_t offset_dwarf_address(uint64_t addr);
 
     auto get_function_from_pc(uint64_t pc) -> dwarf::die;
+
     auto get_line_entry_from_pc(uint64_t pc) -> dwarf::line_table::iterator;
 
     auto read_memory(uint64_t address) -> uint64_t;

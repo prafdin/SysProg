@@ -11,19 +11,17 @@
 #include "registers.h"
 
 
-
-
-std::vector<symbol> debugger::lookup_symbol(const std::string& name) {
+std::vector<symbol> debugger::lookup_symbol(const std::string &name) {
     std::vector<symbol> syms;
 
-    for (auto& sec : m_elf.sections()) {
+    for (auto &sec: m_elf.sections()) {
         if (sec.get_hdr().type != elf::sht::symtab && sec.get_hdr().type != elf::sht::dynsym)
             continue;
 
-        for (auto sym : sec.as_symtab()) {
+        for (auto sym: sec.as_symtab()) {
             if (sym.get_name() == name) {
-                auto& d = sym.get_data();
-                syms.push_back(symbol{ to_symbol_type(d.type()), sym.get_name(), d.value });
+                auto &d = sym.get_data();
+                syms.push_back(symbol{to_symbol_type(d.type()), sym.get_name(), d.value});
             }
         }
     }
@@ -59,7 +57,7 @@ void debugger::remove_breakpoint(std::intptr_t addr) {
 
 void debugger::step_out() {
     auto frame_pointer = get_register_value(m_pid, reg::rbp);
-    auto return_address = read_memory(frame_pointer+8);
+    auto return_address = read_memory(frame_pointer + 8);
 
     bool should_remove_breakpoint = false;
     if (!m_breakpoints.count(return_address)) {
@@ -105,7 +103,7 @@ void debugger::step_over() {
     }
 
     auto frame_pointer = get_register_value(m_pid, reg::rbp);
-    auto return_address = read_memory(frame_pointer+8);
+    auto return_address = read_memory(frame_pointer + 8);
     if (!m_breakpoints.count(return_address)) {
         set_breakpoint_at_address(return_address);
         to_delete.push_back(return_address);
@@ -113,7 +111,7 @@ void debugger::step_over() {
 
     continue_execution();
 
-    for (auto addr : to_delete) {
+    for (auto addr: to_delete) {
         remove_breakpoint(addr);
     }
 }
@@ -126,8 +124,7 @@ void debugger::single_step_instruction() {
 void debugger::single_step_instruction_with_breakpoint_check() {
     if (m_breakpoints.count(get_pc())) {
         step_over_breakpoint();
-    }
-    else {
+    } else {
         single_step_instruction();
     }
 }
@@ -153,9 +150,9 @@ void debugger::set_pc(uint64_t pc) {
 }
 
 dwarf::die debugger::get_function_from_pc(uint64_t pc) {
-    for (auto &cu : m_dwarf.compilation_units()) {
+    for (auto &cu: m_dwarf.compilation_units()) {
         if (die_pc_range(cu.root()).contains(pc)) {
-            for (const auto& die : cu.root()) {
+            for (const auto &die: cu.root()) {
                 if (die.tag == dwarf::DW_TAG::subprogram) {
                     if (die_pc_range(die).contains(pc)) {
                         return die;
@@ -169,14 +166,13 @@ dwarf::die debugger::get_function_from_pc(uint64_t pc) {
 }
 
 dwarf::line_table::iterator debugger::get_line_entry_from_pc(uint64_t pc) {
-    for (auto &cu : m_dwarf.compilation_units()) {
+    for (auto &cu: m_dwarf.compilation_units()) {
         if (die_pc_range(cu.root()).contains(pc)) {
             auto &lt = cu.get_line_table();
             auto it = lt.find_address(pc);
             if (it == lt.end()) {
                 throw std::out_of_range{"Cannot find line entry"};
-            }
-            else {
+            } else {
                 return it;
             }
         }
@@ -185,8 +181,8 @@ dwarf::line_table::iterator debugger::get_line_entry_from_pc(uint64_t pc) {
     throw std::out_of_range{"Cannot find line entry"};
 }
 
-void debugger::print_source(const std::string& file_name, unsigned line, unsigned n_lines_context) {
-    std::ifstream file {file_name};
+void debugger::print_source(const std::string &file_name, unsigned line, unsigned n_lines_context) {
+    std::ifstream file{file_name};
 
     auto start_line = line <= n_lines_context ? 1 : line - n_lines_context;
     auto end_line = line + n_lines_context + (line < n_lines_context ? n_lines_context - line : 0) + 1;
@@ -201,7 +197,7 @@ void debugger::print_source(const std::string& file_name, unsigned line, unsigne
     }
 
 
-    std::cout << (current_line==line ? "> " : "  ");
+    std::cout << (current_line == line ? "> " : "  ");
 
 
     while (current_line <= end_line && file.get(c)) {
@@ -209,7 +205,7 @@ void debugger::print_source(const std::string& file_name, unsigned line, unsigne
         if (c == '\n') {
             ++current_line;
 
-            std::cout << (current_line==line ? "> " : "  ");
+            std::cout << (current_line == line ? "> " : "  ");
         }
     }
 
@@ -224,7 +220,7 @@ siginfo_t debugger::get_signal_info() {
 
 void debugger::step_over_breakpoint() {
     if (m_breakpoints.count(get_pc())) {
-        auto& bp = m_breakpoints[get_pc()];
+        auto &bp = m_breakpoints[get_pc()];
         if (bp.is_enabled()) {
             bp.disable();
             ptrace(PTRACE_SINGLESTEP, m_pid, nullptr, nullptr);
@@ -252,12 +248,12 @@ void debugger::wait_for_signal() {
             std::cout << "Got signal " << strsignal(siginfo.si_signo) << std::endl;
     }
 }
+
 void debugger::handle_sigtrap(siginfo_t info) {
     switch (info.si_code) {
         case SI_KERNEL:
-        case TRAP_BRKPT:
-        {
-            set_pc(get_pc()-1);
+        case TRAP_BRKPT: {
+            set_pc(get_pc() - 1);
             std::cout << "Hit breakpoint at address 0x" << std::hex << get_pc() << std::endl;
             auto offset_pc = offset_load_address(get_pc()); //rember to offset the pc for querying DWARF
             auto line_entry = get_line_entry_from_pc(offset_pc);
@@ -279,90 +275,76 @@ void debugger::continue_execution() {
 }
 
 void debugger::dump_registers() {
-    for (const auto& rd : g_register_descriptors) {
+    for (const auto &rd: g_register_descriptors) {
         std::cout << rd.name << " 0x"
                   << std::setfill('0') << std::setw(16) << std::hex << get_register_value(m_pid, rd.r) << std::endl;
     }
 }
 
-void debugger::handle_command(const std::string& line) {
-    auto args = split(line,' ');
+void debugger::handle_command(const std::string &line) {
+    auto args = split(line, ' ');
     auto command = args[0];
 
     if (is_prefix(command, "cont")) {
         continue_execution();
-    }
-    else if(is_prefix(command, "break")) {
+    } else if (is_prefix(command, "break")) {
         if (args[1][0] == '0' && args[1][1] == 'x') {
-            std::string addr {args[1], 2};
+            std::string addr{args[1], 2};
             set_breakpoint_at_address(std::stol(addr, 0, 16));
-        }
-        else if (args[1].find(':') != std::string::npos) {
+        } else if (args[1].find(':') != std::string::npos) {
             auto file_and_line = split(args[1], ':');
             set_breakpoint_at_source_line(file_and_line[0], std::stol(file_and_line[1]));
-        }
-        else {
+        } else {
             set_breakpoint_at_function(args[1]);
         }
-    }
-    else if(is_prefix(command, "step")) {
+    } else if (is_prefix(command, "step")) {
         step_in();
-    }
-    else if(is_prefix(command, "next")) {
+    } else if (is_prefix(command, "next")) {
         step_over();
-    }
-    else if(is_prefix(command, "finish")) {
+    } else if (is_prefix(command, "finish")) {
         step_out();
-    }
-    else if (is_prefix(command, "register")) {
+    } else if (is_prefix(command, "register")) {
         if (is_prefix(args[1], "dump")) {
             dump_registers();
+        } else if (is_prefix(args[1], "read")) {
+            std::cout << get_register_value(m_pid, get_register_from_name(args[2])) << std::endl;
+        } else if (is_prefix(args[1], "write")) {
+            std::string val{args[3], 2}; //assume 0xVAL
+            set_register_value(m_pid, get_register_from_name(args[2]), std::stol(val, 0, 16));
         }
-        else if (is_prefix(args[1], "read")) {
-        std::cout << get_register_value(m_pid, get_register_from_name(args[2])) << std::endl;
-    	}
-    	else if (is_prefix(args[1], "write")) {
-        std::string val {args[3], 2}; //assume 0xVAL
-        set_register_value(m_pid, get_register_from_name(args[2]), std::stol(val, 0, 16));
-    	}
-    }
-    
-    else if(is_prefix(command, "memory")) {
-        std::string addr {args[2], 2}; //assume 0xADDRESS
+    } else if (is_prefix(command, "memory")) {
+        std::string addr{args[2], 2}; //assume 0xADDRESS
 
         if (is_prefix(args[1], "read")) {
             std::cout << std::hex << read_memory(std::stol(addr, 0, 16)) << std::endl;
         }
         if (is_prefix(args[1], "write")) {
-            std::string val {args[3], 2}; //assume 0xVAL
+            std::string val{args[3], 2}; //assume 0xVAL
             write_memory(std::stol(addr, 0, 16), std::stol(val, 0, 16));
         }
-    }
-    else if(is_prefix(command, "symbol")) {
+    } else if (is_prefix(command, "symbol")) {
         auto syms = lookup_symbol(args[1]);
-        for (auto&& s : syms) {
+        for (auto &&s: syms) {
             std::cout << s.name << ' ' << to_string(s.type) << " 0x" << std::hex << s.addr << std::endl;
         }
-    }
-    else if(is_prefix(command, "stepi")) {
+    } else if (is_prefix(command, "stepi")) {
         single_step_instruction_with_breakpoint_check();
         auto line_entry = get_line_entry_from_pc(get_pc());
         print_source(line_entry->file->path, line_entry->line);
-    }
-    else {
+    } else {
         std::cerr << "Unknown command\n";
     }
 }
 
-bool is_suffix(const std::string& s, const std::string& of) {
+bool is_suffix(const std::string &s, const std::string &of) {
     if (s.size() > of.size()) return false;
     auto diff = of.size() - s.size();
     return std::equal(s.begin(), s.end(), of.begin() + diff);
 }
 
-void debugger::set_breakpoint_at_function(const std::string& name) {
-    for (const auto& cu : m_dwarf.compilation_units()) {
-        for (const auto& die : cu.root()) {
+void debugger::set_breakpoint_at_function(const std::string &name) {
+    for (const auto &cu: m_dwarf.compilation_units()) {
+        for (const auto &die: cu.root()) {
             if (die.has(dwarf::DW_AT::name) && at_name(die) == name) {
                 auto low_pc = at_low_pc(die);
                 auto entry = get_line_entry_from_pc(low_pc);
@@ -373,12 +355,12 @@ void debugger::set_breakpoint_at_function(const std::string& name) {
     }
 }
 
-void debugger::set_breakpoint_at_source_line(const std::string& file, unsigned line) {
-    for (const auto& cu : m_dwarf.compilation_units()) {
+void debugger::set_breakpoint_at_source_line(const std::string &file, unsigned line) {
+    for (const auto &cu: m_dwarf.compilation_units()) {
         if (is_suffix(file, at_name(cu.root()))) {
-            const auto& lt = cu.get_line_table();
+            const auto &lt = cu.get_line_table();
 
-            for (const auto& entry : lt) {
+            for (const auto &entry: lt) {
                 if (entry.is_stmt && entry.line == line) {
                     set_breakpoint_at_address(offset_dwarf_address(entry.address));
                     return;
@@ -390,7 +372,7 @@ void debugger::set_breakpoint_at_source_line(const std::string& file, unsigned l
 
 void debugger::set_breakpoint_at_address(std::intptr_t addr) {
     std::cout << "Set breakpoint at address 0x" << std::hex << addr << std::endl;
-    breakpoint bp {m_pid, addr};
+    breakpoint bp{m_pid, addr};
     bp.enable();
     m_breakpoints[addr] = bp;
 }
@@ -399,8 +381,8 @@ void debugger::run() {
     wait_for_signal();
     initialise_load_address();
 
-    char* line = nullptr;
-    while((line = linenoise("minidbg> ")) != nullptr) {
+    char *line = nullptr;
+    while ((line = linenoise("minidbg> ")) != nullptr) {
         handle_command(line);
         linenoiseHistoryAdd(line);
         linenoiseFree(line);

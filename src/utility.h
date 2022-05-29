@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cstdint>
 #include <sys/personality.h>
 #include <unistd.h>
@@ -15,7 +16,7 @@ enum class symbol_type {
     file,              // Source file associated with the
 };
 
-std::string to_string (symbol_type st);
+std::string to_string(symbol_type st);
 
 symbol_type to_symbol_type(elf::stt sym);
 
@@ -37,4 +38,4 @@ reg get_register_from_name(const std::string &name);
 
 std::vector<std::string> split(const std::string &s, char delimiter);
 
-bool is_prefix(const std::string& s, const std::string& of);
+bool is_prefix(const std::string &s, const std::string &of);

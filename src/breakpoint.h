@@ -7,6 +7,7 @@
 class breakpoint {
 public:
     breakpoint() = default;
+
     breakpoint(pid_t pid, std::intptr_t addr) : m_pid{pid}, m_addr{addr}, m_enabled{false}, m_saved_data{} {}
 
     void enable();
@@ -16,6 +17,7 @@ public:
     bool is_enabled() const;
 
     auto get_address() const -> std::intptr_t;
+
 private:
     pid_t m_pid;
     std::intptr_t m_addr;
