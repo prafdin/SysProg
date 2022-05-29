@@ -51,7 +51,11 @@ bool ArgParser::parse() {
 }
 
 void ArgParser::help() {
-    cout << "Help" << endl;
+    cout << "This is the debugger.  Usage:" << endl << endl <<
+            "    ./my_app [options] [executable-file]" << endl << endl <<
+            "Selection of debuggee:" << endl << endl <<
+            "   -h             Print this message and then exit." << endl <<
+            "   -p             Option requires an argument"<< endl;
 }
 
 
