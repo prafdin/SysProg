@@ -20,4 +20,4 @@ void breakpoint::disable() {
 
 bool breakpoint::is_enabled() const { return m_enabled; }
 
-long breakpoint::get_address() const -> std::intptr_t { return m_addr; }
+auto breakpoint::get_address() const -> std::intptr_t { return m_addr; }
