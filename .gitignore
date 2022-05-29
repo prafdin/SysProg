@@ -7,7 +7,6 @@
 *.so
 CMakeFiles/
 *.cmake
-Makefile
 CMakeCache.txt
 my_app
 
