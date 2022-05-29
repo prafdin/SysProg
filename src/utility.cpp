@@ -95,4 +95,4 @@ symbol_type to_symbol_type(elf::stt sym) {
         default:
             return symbol_type::notype;
     }
-};
+}
