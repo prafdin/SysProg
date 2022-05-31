@@ -196,9 +196,7 @@ void debugger::print_source(const std::string &file_name, unsigned line, unsigne
         }
     }
 
-
     std::cout << (current_line == line ? "> " : "  ");
-
 
     while (current_line <= end_line && file.get(c)) {
         std::cout << c;
@@ -206,6 +204,38 @@ void debugger::print_source(const std::string &file_name, unsigned line, unsigne
             ++current_line;
 
             std::cout << (current_line == line ? "> " : "  ");
+        }
+    }
+
+    std::cout << std::endl;
+}
+
+void debugger::show(){
+    auto func = get_function_from_pc(get_offset_pc());
+    auto func_entry = at_low_pc(func);
+    auto func_end = at_high_pc(func);
+
+    auto line_start = get_line_entry_from_pc(func_entry);
+    auto line_end = get_line_entry_from_pc(func_end);
+
+    std::ifstream file{line_start->file->path};
+    auto file_path = line_start->file->path;
+
+    char c{};
+    auto current_line = 1u;
+
+    while (current_line != line_start->line && file.get(c)) {
+        if (c == '\n') {
+            ++current_line;
+        }
+    }
+
+    while (current_line <= line_end->line - 2 && file.get(c)) {
+        std::cout << c;
+        if (c == '\n') {
+            ++current_line;
+
+            std::cout << (current_line == line_start->line ? "> " : "  ");
         }
     }
 
@@ -327,10 +357,8 @@ void debugger::handle_command(const std::string &line) {
         for (auto &&s: syms) {
             std::cout << s.name << ' ' << to_string(s.type) << " 0x" << std::hex << s.addr << std::endl;
         }
-    } else if (is_prefix(command, "stepi")) {
-        single_step_instruction_with_breakpoint_check();
-        auto line_entry = get_line_entry_from_pc(get_pc());
-        print_source(line_entry->file->path, line_entry->line);
+    } else if (is_prefix(command, "show")) {
+        show();
     } else {
         std::cerr << "Unknown command\n";
     }
@@ -382,9 +410,14 @@ void debugger::run() {
     initialise_load_address();
 
     char *line = nullptr;
-    while ((line = linenoise("minidbg> ")) != nullptr) {
+    while(1){
+        std::string line2;
+        std::getline(std::cin,line2);
+        handle_command(line2.c_str());
+    }
+    /*while ((line = linenoise("minidbg> ")) != nullptr) {
         handle_command(line);
         linenoiseHistoryAdd(line);
         linenoiseFree(line);
-    }
+    }*/
 }

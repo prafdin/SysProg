@@ -35,6 +35,8 @@ public:
 
     void print_source(const std::string &file_name, unsigned line, unsigned n_lines_context = 2);
 
+    void show();
+
     auto lookup_symbol(const std::string &name) -> std::vector<symbol>;
 
     void single_step_instruction();
