@@ -335,7 +335,7 @@ void debugger::handle_command(const std::string &line) {
     auto args = split(line, ' ');
     auto command = args[0];
 
-    if (is_prefix(command, "continue")) {
+    if (is_prefix(command, "cont")) {
         continue_execution();
     } else if (is_prefix(command, "break")) {
         if (args[1][0] == '0' && args[1][1] == 'x') {
