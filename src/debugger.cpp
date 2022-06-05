@@ -201,7 +201,7 @@ void debugger::print_source(const std::string &file_name, unsigned line, unsigne
     }
     else std::cout << "  ";
 
-    while (current_line <= end_line && file.get(c)) {
+    while (current_line <= end_line && file.get(c) && end_line+1 != NULL) {
         std::cout << c;
         if (c == '\n') {
             ++current_line;
@@ -377,7 +377,7 @@ void debugger::handle_command(const std::string &line) {
         auto func_end = at_high_pc(func);
 
         auto line_entry = get_line_entry_from_pc(func_entry);
-        auto line_end = get_line_entry_from_pc(func_end);
+        auto line_end = get_line_entry_from_pc(func_end - 3);
         print_source(line_entry->file->path, line_entry->line, line_end->line, "show");
         auto &bp = m_breakpoints[get_pc()];
         bp.disable();
