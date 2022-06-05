@@ -25,15 +25,15 @@ public:
 
     void run();
 
-    void set_breakpoint_at_address(std::intptr_t addr);
+    void set_breakpoint_at_address(std::intptr_t addr, std::string call = "break");
 
-    void set_breakpoint_at_function(const std::string &name);
+    void set_breakpoint_at_function(const std::string &name, std::string call = "break");
 
     void set_breakpoint_at_source_line(const std::string &file, unsigned line);
 
     void dump_registers();
 
-    void print_source(const std::string &file_name, unsigned line, unsigned n_lines_context = 2);
+    void print_source(const std::string &file_name, unsigned line, unsigned n_lines_context = 2, std::string = "step");
 
     void show();
 
@@ -54,7 +54,7 @@ public:
 private:
     void handle_command(const std::string &line);
 
-    void continue_execution();
+    void continue_execution(std::string call = "break");
 
     auto get_pc() -> uint64_t;
 
@@ -64,11 +64,11 @@ private:
 
     void step_over_breakpoint();
 
-    void wait_for_signal();
+    void wait_for_signal(std::string call = "break");
 
     auto get_signal_info() -> siginfo_t;
 
-    void handle_sigtrap(siginfo_t info);
+    void handle_sigtrap(siginfo_t info, std::string call = "break");
 
     void initialise_load_address();
 

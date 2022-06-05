@@ -181,7 +181,7 @@ dwarf::line_table::iterator debugger::get_line_entry_from_pc(uint64_t pc) {
     throw std::out_of_range{"Cannot find line entry"};
 }
 
-void debugger::print_source(const std::string &file_name, unsigned line, unsigned n_lines_context) {
+void debugger::print_source(const std::string &file_name, unsigned line, unsigned n_lines_context, std::string call) {
     std::ifstream file{file_name};
 
     auto start_line = line <= n_lines_context ? 1 : line - n_lines_context;
@@ -196,51 +196,59 @@ void debugger::print_source(const std::string &file_name, unsigned line, unsigne
         }
     }
 
-    std::cout << (current_line == line ? "> " : "  ");
+    if(call != "show") {
+        std::cout << (current_line == line ? "> " : "  ");
+    }
+    else std::cout << "  ";
 
     while (current_line <= end_line && file.get(c)) {
         std::cout << c;
         if (c == '\n') {
             ++current_line;
 
-            std::cout << (current_line == line ? "> " : "  ");
+            if(call != "show") {
+                std::cout << (current_line == line ? "> " : "  ");
+            }
+            else std::cout << "  ";
         }
     }
 
     std::cout << std::endl;
 }
 
-void debugger::show(){
+/*void debugger::show(){
     auto func = get_function_from_pc(get_offset_pc());
     auto func_entry = at_low_pc(func);
     auto func_end = at_high_pc(func);
 
-    auto line_start = get_line_entry_from_pc(func_entry);
-    auto line_end = get_line_entry_from_pc(func_end);
+    auto line_entry = get_line_entry_from_pc(func_entry);
+    auto line_end = get_line_entry_from_pc(func_end-3);
 
-    std::ifstream file{line_start->file->path};
-    auto file_path = line_start->file->path;
+    std::ifstream file{line_entry->file->path};
+    auto tmp=line_end->end_sequence;
+    auto tmp2=line_end->epilogue_begin;
 
     char c{};
     auto current_line = 1u;
 
-    while (current_line != line_start->line && file.get(c)) {
+    while (current_line != line_entry->line && file.get(c)) {
         if (c == '\n') {
             ++current_line;
         }
     }
 
-    while (current_line <= line_end->line - 2 && file.get(c)) {
+    std::cout << "  ";
+
+    while (current_line <= line_end->line + 1 && file.get(c)) {
         std::cout << c;
         if (c == '\n') {
             ++current_line;
-
-            std::cout << (current_line == line_start->line ? "> " : "  ");
+            std::cout << "  ";
         }
     }
 
     std::cout << std::endl;
-}
+}*/
 
 siginfo_t debugger::get_signal_info() {
     siginfo_t info;
@@ -260,7 +268,7 @@ void debugger::step_over_breakpoint() {
     }
 }
 
-void debugger::wait_for_signal() {
+void debugger::wait_for_signal(std::string call) {
     int wait_status;
     auto options = 0;
     waitpid(m_pid, &wait_status, options);
@@ -269,7 +277,7 @@ void debugger::wait_for_signal() {
 
     switch (siginfo.si_signo) {
         case SIGTRAP:
-            handle_sigtrap(siginfo);
+            handle_sigtrap(siginfo, call);
             break;
         case SIGSEGV:
             std::cout << "Yay, segfault. Reason: " << siginfo.si_code << std::endl;
@@ -279,15 +287,19 @@ void debugger::wait_for_signal() {
     }
 }
 
-void debugger::handle_sigtrap(siginfo_t info) {
+void debugger::handle_sigtrap(siginfo_t info, std::string call) {
     switch (info.si_code) {
         case SI_KERNEL:
         case TRAP_BRKPT: {
             set_pc(get_pc() - 1);
-            std::cout << "Hit breakpoint at address 0x" << std::hex << get_pc() << std::endl;
+            if(call != "show"){
+                std::cout << "Hit breakpoint at address 0x" << std::hex << get_pc() << std::endl;
+            }
             auto offset_pc = offset_load_address(get_pc()); //rember to offset the pc for querying DWARF
             auto line_entry = get_line_entry_from_pc(offset_pc);
-            print_source(line_entry->file->path, line_entry->line);
+            if (call != "show"){
+                print_source(line_entry->file->path, line_entry->line);
+            }
             return;
         }
         case TRAP_TRACE:
@@ -298,10 +310,10 @@ void debugger::handle_sigtrap(siginfo_t info) {
     }
 }
 
-void debugger::continue_execution() {
+void debugger::continue_execution(std::string call) {
     step_over_breakpoint();
     ptrace(PTRACE_CONT, m_pid, nullptr, nullptr);
-    wait_for_signal();
+    wait_for_signal(call);
 }
 
 void debugger::dump_registers() {
@@ -358,7 +370,17 @@ void debugger::handle_command(const std::string &line) {
             std::cout << s.name << ' ' << to_string(s.type) << " 0x" << std::hex << s.addr << std::endl;
         }
     } else if (is_prefix(command, "show")) {
-        show();
+        set_breakpoint_at_function("main", "show");
+        continue_execution("show");
+        auto func = get_function_from_pc(get_offset_pc());
+        auto func_entry = at_low_pc(func);
+        auto func_end = at_high_pc(func);
+
+        auto line_entry = get_line_entry_from_pc(func_entry);
+        auto line_end = get_line_entry_from_pc(func_end);
+        print_source(line_entry->file->path, line_entry->line, line_end->line, "show");
+        auto &bp = m_breakpoints[get_pc()];
+        bp.disable();
     } else {
         std::cerr << "Unknown command\n";
     }
@@ -370,14 +392,14 @@ bool is_suffix(const std::string &s, const std::string &of) {
     return std::equal(s.begin(), s.end(), of.begin() + diff);
 }
 
-void debugger::set_breakpoint_at_function(const std::string &name) {
+void debugger::set_breakpoint_at_function(const std::string &name, std::string call) {
     for (const auto &cu: m_dwarf.compilation_units()) {
         for (const auto &die: cu.root()) {
             if (die.has(dwarf::DW_AT::name) && at_name(die) == name) {
                 auto low_pc = at_low_pc(die);
                 auto entry = get_line_entry_from_pc(low_pc);
                 ++entry; //skip prologue
-                set_breakpoint_at_address(offset_dwarf_address(entry->address));
+                set_breakpoint_at_address(offset_dwarf_address(entry->address), call);
             }
         }
     }
@@ -398,8 +420,10 @@ void debugger::set_breakpoint_at_source_line(const std::string &file, unsigned l
     }
 }
 
-void debugger::set_breakpoint_at_address(std::intptr_t addr) {
-    std::cout << "Set breakpoint at address 0x" << std::hex << addr << std::endl;
+void debugger::set_breakpoint_at_address(std::intptr_t addr, std::string call) {
+    if (call != "show"){
+        std::cout << "Set breakpoint at address 0x" << std::hex << addr << std::endl;
+    }
     breakpoint bp{m_pid, addr};
     bp.enable();
     m_breakpoints[addr] = bp;
