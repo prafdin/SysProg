@@ -52,6 +52,8 @@ public:
     void remove_breakpoint(std::intptr_t addr);
 
 private:
+    bool end_of_program = false;
+
     void handle_command(const std::string &line);
 
     void continue_execution(std::string call = "break");

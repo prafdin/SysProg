@@ -96,7 +96,7 @@ void debugger::step_over() {
     while (line->address < func_end) {
         auto load_address = offset_dwarf_address(line->address);
         if (line->address != start_line->address && !m_breakpoints.count(load_address)) {
-            set_breakpoint_at_address(load_address);
+            set_breakpoint_at_address(load_address, "show");
             to_delete.push_back(load_address);
         }
         ++line;
@@ -105,11 +105,11 @@ void debugger::step_over() {
     auto frame_pointer = get_register_value(m_pid, reg::rbp);
     auto return_address = read_memory(frame_pointer + 8);
     if (!m_breakpoints.count(return_address)) {
-        set_breakpoint_at_address(return_address);
+        set_breakpoint_at_address(return_address, "show");
         to_delete.push_back(return_address);
     }
 
-    continue_execution();
+    continue_execution("show");
 
     for (auto addr: to_delete) {
         remove_breakpoint(addr);
@@ -201,7 +201,7 @@ void debugger::print_source(const std::string &file_name, unsigned line, unsigne
     }
     else std::cout << "  ";
 
-    while (current_line <= end_line && file.get(c) && end_line+1 != NULL) {
+    while (current_line <= end_line && file.get(c)) {
         std::cout << c;
         if (c == '\n') {
             ++current_line;
@@ -262,7 +262,7 @@ void debugger::step_over_breakpoint() {
         if (bp.is_enabled()) {
             bp.disable();
             ptrace(PTRACE_SINGLESTEP, m_pid, nullptr, nullptr);
-            wait_for_signal();
+            wait_for_signal("show");
             bp.enable();
         }
     }
@@ -283,6 +283,7 @@ void debugger::wait_for_signal(std::string call) {
             std::cout << "Yay, segfault. Reason: " << siginfo.si_code << std::endl;
             break;
         default:
+            end_of_program = true;
             std::cout << "Got signal " << strsignal(siginfo.si_signo) << std::endl;
     }
 }
@@ -292,20 +293,27 @@ void debugger::handle_sigtrap(siginfo_t info, std::string call) {
         case SI_KERNEL:
         case TRAP_BRKPT: {
             set_pc(get_pc() - 1);
-            if(call != "show"){
+            if(call != "show" && call != "initial"){
                 std::cout << "Hit breakpoint at address 0x" << std::hex << get_pc() << std::endl;
             }
             auto offset_pc = offset_load_address(get_pc()); //rember to offset the pc for querying DWARF
-            auto line_entry = get_line_entry_from_pc(offset_pc);
-            if (call != "show"){
-                print_source(line_entry->file->path, line_entry->line);
+            try{
+                auto line_entry = get_line_entry_from_pc(offset_pc);
+                if (call != "initial"){
+                    print_source(line_entry->file->path, line_entry->line);
+                }
+            }
+            catch(std::out_of_range e){
+                std::cout << "End of program" << std::endl;
+                end_of_program = true;
+                return;
             }
             return;
         }
         case TRAP_TRACE:
             return;
         default:
-            std::cout << "Unknown SIGTRAP code " << info.si_code << std::endl;
+            //end_of_program = true;
             return;
     }
 }
@@ -370,8 +378,10 @@ void debugger::handle_command(const std::string &line) {
             std::cout << s.name << ' ' << to_string(s.type) << " 0x" << std::hex << s.addr << std::endl;
         }
     } else if (is_prefix(command, "show")) {
-        set_breakpoint_at_function("main", "show");
-        continue_execution("show");
+        if (m_breakpoints.size() == 0) {
+            set_breakpoint_at_function("main", "show");
+            continue_execution("initial");
+        }
         auto func = get_function_from_pc(get_offset_pc());
         auto func_entry = at_low_pc(func);
         auto func_end = at_high_pc(func);
@@ -434,14 +444,10 @@ void debugger::run() {
     initialise_load_address();
 
     char *line = nullptr;
-    while(1){
-        std::string line2;
-        std::getline(std::cin,line2);
-        handle_command(line2.c_str());
-    }
-    /*while ((line = linenoise("minidbg> ")) != nullptr) {
+
+    while (!end_of_program && (line = linenoise("MEGAdbg> ")) != nullptr) {
         handle_command(line);
         linenoiseHistoryAdd(line);
         linenoiseFree(line);
-    }*/
+    }
 }
