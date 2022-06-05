@@ -16,7 +16,7 @@ public:
 
     bool is_enabled() const;
 
-    auto get_address() const -> std::intptr_t;
+    std::intptr_t get_address() const;
 
 private:
     pid_t m_pid;

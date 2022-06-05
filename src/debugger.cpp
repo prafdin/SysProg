@@ -181,37 +181,6 @@ dwarf::line_table::iterator debugger::get_line_entry_from_pc(uint64_t pc) {
     throw std::out_of_range{"Cannot find line entry"};
 }
 
-void debugger::print_source(const std::string &file_name, unsigned line, unsigned n_lines_context) {
-    std::ifstream file{file_name};
-
-    auto start_line = line <= n_lines_context ? 1 : line - n_lines_context;
-    auto end_line = line + n_lines_context + (line < n_lines_context ? n_lines_context - line : 0) + 1;
-
-    char c{};
-    auto current_line = 1u;
-
-    while (current_line != start_line && file.get(c)) {
-        if (c == '\n') {
-            ++current_line;
-        }
-    }
-
-
-    std::cout << (current_line == line ? "> " : "  ");
-
-
-    while (current_line <= end_line && file.get(c)) {
-        std::cout << c;
-        if (c == '\n') {
-            ++current_line;
-
-            std::cout << (current_line == line ? "> " : "  ");
-        }
-    }
-
-    std::cout << std::endl;
-}
-
 siginfo_t debugger::get_signal_info() {
     siginfo_t info;
     ptrace(PTRACE_GETSIGINFO, m_pid, nullptr, &info);
@@ -334,12 +303,6 @@ void debugger::handle_command(const std::string &line) {
     } else {
         std::cerr << "Unknown command\n";
     }
-}
-
-bool is_suffix(const std::string &s, const std::string &of) {
-    if (s.size() > of.size()) return false;
-    auto diff = of.size() - s.size();
-    return std::equal(s.begin(), s.end(), of.begin() + diff);
 }
 
 void debugger::set_breakpoint_at_function(const std::string &name) {

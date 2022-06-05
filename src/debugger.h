@@ -33,9 +33,7 @@ public:
 
     void dump_registers();
 
-    void print_source(const std::string &file_name, unsigned line, unsigned n_lines_context = 2);
-
-    auto lookup_symbol(const std::string &name) -> std::vector<symbol>;
+    std::vector<symbol> lookup_symbol(const std::string &name);
 
     void single_step_instruction();
 
@@ -54,9 +52,9 @@ private:
 
     void continue_execution();
 
-    auto get_pc() -> uint64_t;
+    uint64_t get_pc();
 
-    auto get_offset_pc() -> uint64_t;
+    uint64_t get_offset_pc();
 
     void set_pc(uint64_t pc);
 
@@ -64,7 +62,7 @@ private:
 
     void wait_for_signal();
 
-    auto get_signal_info() -> siginfo_t;
+    siginfo_t get_signal_info();
 
     void handle_sigtrap(siginfo_t info);
 
@@ -74,11 +72,11 @@ private:
 
     uint64_t offset_dwarf_address(uint64_t addr);
 
-    auto get_function_from_pc(uint64_t pc) -> dwarf::die;
+    dwarf::die get_function_from_pc(uint64_t pc);
 
-    auto get_line_entry_from_pc(uint64_t pc) -> dwarf::line_table::iterator;
+    dwarf::line_table::iterator get_line_entry_from_pc(uint64_t pc);
 
-    auto read_memory(uint64_t address) -> uint64_t;
+    uint64_t read_memory(uint64_t address);
 
     void write_memory(uint64_t address, uint64_t value);
 

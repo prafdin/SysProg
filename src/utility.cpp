@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <fstream>
 
 #include "utility.h"
 #include "registers.h"
@@ -65,6 +66,12 @@ bool is_prefix(const std::string &s, const std::string &of) {
     return std::equal(s.begin(), s.end(), of.begin());
 }
 
+bool is_suffix(const std::string &s, const std::string &of) {
+    if (s.size() > of.size()) return false;
+    auto diff = of.size() - s.size();
+    return std::equal(s.begin(), s.end(), of.begin() + diff);
+}
+
 std::string to_string(symbol_type st) {
     switch (st) {
         case symbol_type::notype:
@@ -95,4 +102,33 @@ symbol_type to_symbol_type(elf::stt sym) {
         default:
             return symbol_type::notype;
     }
+}
+
+void print_source(const std::string &file_name, unsigned line, unsigned n_lines_context) {
+    std::ifstream file{file_name};
+
+    auto start_line = line <= n_lines_context ? 1 : line - n_lines_context;
+    auto end_line = line + n_lines_context + (line < n_lines_context ? n_lines_context - line : 0) + 1;
+
+    char c{};
+    auto current_line = 1u;
+
+    while (current_line != start_line && file.get(c)) {
+        if (c == '\n') {
+            ++current_line;
+        }
+    }
+
+    std::cout << (current_line == line ? "> " : "  ");
+
+    while (current_line <= end_line && file.get(c)) {
+        std::cout << c;
+        if (c == '\n') {
+            ++current_line;
+
+            std::cout << (current_line == line ? "> " : "  ");
+        }
+    }
+
+    std::cout << std::endl;
 }
