@@ -396,7 +396,7 @@ void debugger::handle_command(const std::string &line) {
     }
 }
 
-void debugger::set_breakpoint_at_function(const std::string &name) {
+void debugger::set_breakpoint_at_function(const std::string &name, std::string call) {
     for (const auto &cu: m_dwarf.compilation_units()) {
         for (const auto &die: cu.root()) {
             if (die.has(dwarf::DW_AT::name) && at_name(die) == name) {
