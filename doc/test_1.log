@@ -1,0 +1,4 @@
+evgeniy@evgeniy:~/SysProg$ ./my_app a.out
+Started debugging Process 1828
+Unknown SIGTRAP code 0
+MEGAdbg> 

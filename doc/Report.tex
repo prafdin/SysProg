@@ -1,12 +1,19 @@
-\documentclass[a4paper,14pt,oneside]{extreport}  %односторонняя печать
+\documentclass[oneside,final,14pt]{extreport}
 \usepackage[utf8]{inputenc}
 \usepackage[russianb]{babel}
-\usepackage{fontspec}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{vmargin}
+\setpapersize{A4}
+\setmarginsrb{3cm}{2cm}{1cm}{2cm}{0pt}{0mm}{0pt}{13mm} 
+
+\setlength\parindent{1.25cm}
+\usepackage{indentfirst}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage {titlesec}
 \usepackage{tocloft}
 \usepackage{graphicx}
 \usepackage[unicode, pdftex]{hyperref}
-\graphicspath{{Desktop/}}
 \DeclareGraphicsExtensions{.pdf,.png,.jpg}
 \setlength{\cftbeforetoctitleskip}{-1em}
 
@@ -17,73 +24,201 @@
 \renewcommand{\@makeschapterhead}[1]{\vspace{0pt}{\parindent=0pt \raggedright\normalfont\Huge\bfseries #1\par\nopagebreak\vspace{20 pt}}}
 \makeatother
 
-\titlespacing{\chapter}{0pt}{-1cm}{1.5cm}
-
-\setmainfont{Times  New Roman}
-\usepackage{vmargin}
 \usepackage{amsmath}
-\setpapersize{A4}
-\setmarginsrb{3cm}{2cm}{1cm}{2cm}{0pt}{0mm}{0pt}{13mm} 
-\usepackage{indentfirst}
-\sloppy
+\usepackage{placeins}
+\usepackage{float}
+\usepackage{lastpage}
+\usepackage{booktabs,tabularx}
+
+
+\usepackage{totcount}
+\newtotcounter{figurecounter}
+\makeatletter
+\renewenvironment{figure}[1][\fps@figure]{
+	\edef\@tempa{\noexpand\@float{figure}[#1]}
+	\@tempa
+	\addtocounter{figurecounter}{1}
+}{
+	\end@float
+}
+\makeatother
+
+\renewcommand\labelitemi{-}
+
+\usepackage{listings}
+\usepackage{setspace}
+\onehalfspacing
+
+
+% change chapter style
+\usepackage[T1]{fontenc}
+\usepackage{titlesec, blindtext, color}
+
+
+\titleformat{\chapter}[hang]{\Huge}{}{0pt}{\hspace{1.25cm}\raggedright}
+\titlespacing{\chapter}{0pt}{-1cm}{8pt}
+\titleformat{\section}[hang]{\Large}{}{0pt}{\bfseries\hspace{1.25cm}\thesection \ }
+\titlespacing{\section}{0pt}{24pt}{16pt}
+\titleformat{\subsection}[hang]{\large}{}{0pt}{\bfseries\hspace{1.25cm}\thesubsection \ }
+\titlespacing{\subsection}{0pt}{24pt}{16pt}
+
+\usepackage{caption2}
+
 \begin{document}
-	\begin{titlepage}
-		\begin{centering}
-		{ МИНИСТЕРСТВА НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ \\ РОССИЙСКОЙ ФЕДЕРАЦИИ\\Федеральное государственное автономное образовательное учреждение\\
-			высшего образования «Самарский национальный исследовательский\\
-			университет имени академика С.П. Королева»\\{(Самарский университет)}\\	}
-      	\end{centering}
-        \vfill
-        \begin{table}[h]
-            \begin{center}
-         	\begin{tabular}{|p{2,94cm}|p{12,76cm}|}
-       		\hline Институт & информатики и кибернетики \\ \hline
-       		Факультет & информатики  \\ \hline
-       		Кафедра & геоинформатики и информационной безопасности \\ \hline
-        	\end{tabular}
-            \end{center}
-        \end{table}
-		\centerline{\bf ЗАДАНИЕ НА КУРСОВОЙ ПРОЕКТ} 
+\def\figurename{Рисунок}
+\renewcommand{\captionlabeldelim}{~--}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+	
+		\begin{center}
+			{ 
+				МИНИСТЕРСТВА НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ \\ 
+				РОССИЙСКОЙ ФЕДЕРАЦИИ\\
+				Федеральное государственное автономное образовательное учреждение\\
+				высшего образования «Самарский национальный исследовательский\\
+				университет имени академика С.П. Королева»\\{(Самарский университет)}\\	
+			}
+		\end{center}
+	
 		\vfill
-		\noindent{Студентам Бобкову В.А. группы 6312, Правдину И.Д. группы 6312, \\ Терновскому Е.В. группы 6312, Хвацковой А.А. группы 6312\\}
-        \noindent{«Тема проекта: Реализация отладчика для компьютерной программы»}
+		
+		\noindent
+		\begin{minipage} {\textwidth}
+			\begin{tabular}{
+					|p{\dimexpr0.3\textwidth-2\tabcolsep}
+					|p{\dimexpr0.7\textwidth-2\tabcolsep}|}
+				\hline 
+				Институт & информатики и кибернетики \\ \hline
+				Факультет & информатики  \\ \hline
+				Кафедра & геоинформатики и информационной безопасности \\ 
+				\hline
+			\end{tabular}
+		\end{minipage}\\
+	
+		\vfill
+		
+		\begin{center}
+			{
+				КУРСОВОЙ ПРОЕКТ ПО ДИСЦИПЛИНЕ\\
+				"Системное программирование"\\
+			}
+		\end{center}
+	
+		\begin{center}{ПОЯСНИТЕЛЬНАЯ ЗАПИСКА\\
+			"Реализация отладчика для компьютерной программы"\\
+		}\end{center}
+		\vfill
+		\begin{table}[h]
+			\noindent
+			\begin{tabularx}{\textwidth}{p{0.5\textwidth}p{0.2\textwidth}X}
+				Студент  &  \rightline{$\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$} &   В.А. Бобков\\
+				Студент &  \rightline{$\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$} &  И.Д. Правдин \\
+				Студент &  \rightline{$\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$} & Е.В. Терновский\\
+				Студент &  \rightline{$\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$} &   А.А. Хвацкова \\
+				Руководитель работы&  \rightline{$\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$} & А.В. Веричев \\
+			\end{tabularx}
+		\end{table}
+		\mbox{}
+		\vfill
+		\centerline{САМАРА 2022}
+\end{titlepage}
+\setcounter{page}{2} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		\begin{singlespacing}
+		\begin{centering}
+		{ 	
+			МИНИСТЕРСТВА НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ \\ 
+			РОССИЙСКОЙ ФЕДЕРАЦИИ\\
+			Федеральное государственное автономное образовательное учреждение\\
+			высшего образования «Самарский национальный исследовательский\\
+			университет имени академика С.П. Королева»\\{(Самарский университет)}\\	
+		}
+		\end{centering}
+      	     
         \vfill
-        \begin{table}[h]
+        
+        \noindent
+        \begin{minipage} {\textwidth}
+        		\begin{tabular}{
+        				|p{\dimexpr0.3\textwidth-2\tabcolsep}
+        				|p{\dimexpr0.7\textwidth-2\tabcolsep}|}
+        			\hline 
+        			Институт & информатики и кибернетики \\ \hline
+        			Факультет & информатики  \\ \hline
+        			Кафедра & геоинформатики и информационной безопасности \\ 
+        			\hline
+        		\end{tabular}
+        \end{minipage}\\
+
+    
+        \vfill
+        
+		\centerline {\bf ЗАДАНИЕ НА КУРСОВОЙ ПРОЕКТ } 
+		\noindent{Студентам Бобкову В.А. группы 6312, Правдину И.Д. группы 6312, \\ 
+			Терновскому Е.В. группы 6312, Хвацковой А.А. группы 6312 \\
+		}
+		\noindent{Тема проекта: «Реализация отладчика для компьютерной программы»\\}
+		\\
+        \noindent
+        \begin{minipage} {\textwidth}
           \begin{center}
-          	\begin{tabular}{|p{4,5cm}|p{6cm}|p{6cm}|}
+          	\begin{tabular}{
+          			|p{\dimexpr0.3\textwidth-2\tabcolsep}
+          			|p{\dimexpr0.4\textwidth-2\tabcolsep}
+          			|p{\dimexpr0.3\textwidth-2\tabcolsep}|
+          		}
           		\hline  
-          		Планируемые результаты освоения образовательной программы (компетенции) & Планируемые результаты практики & Содержание задания \\ \hline
-          		ОПК-3 ‑ способность применять языки, системы и инструментальные средства программирования в профессиональной деятельности& Знать основные понятия системного программирования (операционная система, файл, поток, процесс, сигнал и др.); основные системные вызовы, описанные в стандарте POSIX; механизм осуществления системных вызовов.
+          		Планируемые результаты освоения образовательной программы (компетенции) & 
+          		Планируемые результаты практики &
+          		Содержание задания \\ \hline
+          		
+          		ОПК-3 ‑ способность применять языки, системы и инструментальные средства программирования в профессиональной деятельности & 
           		Уметь использовать системные вызовы при написании программ.
-          		Владеть навыками создания программ для операционных систем, реализующих стандарт POSIX. & 1. Изучение методов и подходов к решению задачи отладчика. \newline 2. Изучение связанных механизмов работы ОС. \newline 3. Программная реализация отладчика. \newline
-          		 4. Отладка и тестирование разработанной программы. \\ \hline 
+          		Владеть навыками создания программ для операционных систем, реализующих стандарт POSIX; механизм осуществления системных вызовов.
+          		Уметь использовать системные вызовы при написании программ.
+          		Владеть навыками создания программ для операционных систем, реализующих стандарт POSIX. &
+          		1. Изучение методов и подходов к задаче реализации отладчика. \newline 
+          		2. Изучение связанных механизмов работы ОС. \newline 
+          		3. Программная реализация отладчика. \newline
+          		4. Отладка и тестирование разработанной программы. \\ \hline 
           	\end{tabular}
           \end{center}
-        \end{table}
-        \noindent{Дата выдачи задания 10 февраля 2022 г\\ Срок представления на кафедру пояснительной записки 9 июня 2022 г.}
-    \end{titlepage}
+    	\end{minipage}\\
 
-        \setcounter{page}{2} 
-      \noindent{Руководитель курсового проекта\\}
-      ст. преподаватель каф. ГИиИБ \hspace{60pt} $\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$ \ А.В. Веричев\\
-      Задание приняли к исполнению\\
-     \\ студент группы \textnumero\ 6312 \hspace{100pt}  $\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$ \ Бобков В.А. \\
-     \\ студент группы \textnumero\ 6312 \hspace{100pt} $\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$ \ Правдин И.Д.\\
-     \\ студент группы \textnumero\ 6312 \hspace{100pt} $\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$ \ Терновский Е.В.\\
-     \\ студент группы \textnumero\ 6312 \hspace{100pt} $\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$ \ Хвацкова А.А.
-\newpage
+		\vfill
+        \noindent{Дата выдачи задания 10 февраля 2022 г\\ Срок представления на кафедру пояснительной записки 9 июня 2022 г.}
+    \end{singlespacing}\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 	\\\begin{minipage} {\textwidth}
+		\noindent
+		\begin{tabularx}{\textwidth}{p{0.5\textwidth}p{0.2\textwidth}X}
+			Руководитель курсового проекта ст.~преподаватель каф. ГИиИБ &  \rightline{$\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$} & А.В. Веричев \\
+			студент группы № 6312 &  \rightline{$\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$} &   В.А. Бобков\\
+			студент группы № 6312 &  \rightline{$\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$} &  И.Д. Правдин \\
+			студент группы № 6312 &  \rightline{$\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$} & Е.В. Терновский\\
+			студент группы № 6312 &  \rightline{$\underset{\text{\itshape ({\small подпись})}}{\underline{\hspace{0.2\textwidth}}}$} &   А.А. Хвацкова \\
+		\end{tabularx}
+	\end{minipage}
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {\bf РЕФЕРАТ}
 
 \vskip12pt
-{\bf Пояснительная записка к курсовому проекту: } {23с., 16 рисунков, 7 источников.}
+{\bf Пояснительная записка к курсовому проекту: } {
+	 \begin{NoHyper}{\pageref{LastPage}}\end{NoHyper} с., 
+	 \total{figurecounter} рисунков, 
+	 7 источников.
+ }
 
- РЕАЛИЗАЦИЯ ОТЛАДЧИКА ДЛЯ КОМПЬЮТЕРНОЙ ПРОГРАММЫ\\
+РЕАЛИЗАЦИЯ ОТЛАДЧИКА ДЛЯ КОМПЬЮТЕРНОЙ ПРОГРАММЫ\\
 
 Цель работы: написание отладчика в операционной системе Linux с помощью языка программирования С++ с реализацией таких функций, как запуск, остановка и продолжение выполнения, установка точки останова, чтение и запись регистров и памяти, step методы и вывод исходного кода отлаживаемого приложения.
 
 \newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \tableofcontents
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter*{Введение}
 Отладчики — один из самых ценных инструментов в наборе любого разработчика. Эта компьютерная программа предназначена для поиска ошибок в других программах и ядрах операционных систем. Отладчик позволяет выполнять трассировку, отслеживать, устанавливать или изменять значения переменных в процессе выполнения кода, устанавливать и удалять точки останова.
 Отладчики бывают самыми разными, на данный момент существует множество отладчиков, в которых реализуется различный функционал в зависимости от задач, языков программирования и функций, стоящих перед разработчиком. В качестве примеров популярных на данный момент отладчиков можно привести DBX, Dtrace, GNU Debugger и так далее.\\
@@ -94,9 +229,8 @@
 	\item GIU (Graphic User Interface) графический пользовательский интерфейс, элементы которого выполнены в виде графических изображений. То есть все основные объекты, присутствующие в этом интерфейсе — иконки, функциональные кнопки, объекты меню и т.д. — выполнены в виде изображений.
 \end{enumerate}
 
-Стоит отметить, что на данный момент разработка такого инструмента как отладчик крайне актуальна, так как реализация любого кода или программы сильно усложняется без отладки, а нахождение различных типов ошибок в коде может занимать несколько часов или даже дней, если пренебрегать таким полезным и важным инструментом, как отладчик.
-
-\newpage
+Стоит отметить, что на данный момент разработка такого инструмента как отладчик крайне актуальна, так как реализация любого кода или программы сильно усложняется без отладки, а нахождение различных типов ошибок в коде может занимать несколько часов или даже дней, если пренебрегать таким полезным и важным инструментом, как отладчик.\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Выбранные технологии при разработке приложения}
 \section{Язык программирования и операционная система}
 Для написания отладчика был выбран язык программирования С++.
@@ -128,8 +262,7 @@ C++ компилируемый, структурированный, объект
 Стандартные средства разработки компилируют программу в файл ELF (Executable and Linkable Format) с возможностью включения отладочной информации.
 Исполняемый файл формата ELF состоит из таких частей:
 	\begin{itemize}
-	\item Заголовок (ELF Header)
-	
+	\item Заголовок (ELF Header) \\
 	Содержит общую информацию о файле и его основные характеристики.
 	\item Заголовок программы (Program Header Table)
 	
@@ -204,24 +337,24 @@ C++ компилируемый, структурированный, объект
 
 \subsection{Размещение исходных кодов}
 В корне проекта находится файл CMakeLists.txt, в котором прописаны правила сборки разработанного приложения
-Также там расположены три папки:\\
+Также там расположены три папки:
 	\begin{itemize}
-	\item /doc — в этой папке находится документация к проекту\\
-	\item /lib — в этой папке находится исходный для двух вспомогательных библиотек Linenoise и Libelfin\\
-	\item /src — в этой папке находится весь исходный код для разработанного отладчика\\
+	\item /doc --- в этой папке находится документация к проекту
+	\item /lib --- в этой папке находится исходный для двух вспомогательных библиотек Linenoise и Libelfin
+	\item /src --- в этой папке находится весь исходный код для разработанного отладчика
 \end{itemize}
 \subsection{Требуемые версии средств сборки}
 	\begin{itemize}
-	\item gcc — version 7.5.0 
-	\item cmake —  version 3.10.2
-	\item make — version 4.1
-	\item стандарт С++ —  version ++17
+	\item gcc --- version 7.5.0 
+	\item cmake ---  version 3.10.2
+	\item make --- version 4.1
+	\item стандарт С++ ---  version ++17
 \end{itemize}
 \subsection{Поддерживаемые форматы отлаживаемых приложений}
 	\begin{itemize}
-	\item gcc — version 7.5.0 
-	\item glibc — 2.27
-	\item  DWARF  — 2.0.0
+	\item gcc --- version 7.5.0 
+	\item glibc --- 2.27
+	\item  DWARF  --- 2.0.0
 \end{itemize}
 
 \section{Метод реализации технологии отладки}
@@ -234,151 +367,144 @@ INT 3 — команда процессоров семейства x86, кото
 Когда процессор выполняет инструкцию int 3, управление передается обработчику прерывания точки останова, который сигнализирует процессу SIGTRAP в Linux.
 \subsection{Основные функции}
 	\begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\item  {\bf main} 
-	\begin{figure}[h!]
-		\center{\includegraphics[scale=0.6]{1}}
-		\caption{}
-	\end{figure}
-	\newpage
+	\begin{lstlisting}
+int main(int argc, char *argv[]) {
+    ArgParser args(argc, argv);
+    if (!args.parse()) {
+        return 1;
+    }
+    auto prog = args.getProgName();
+    auto pid = fork();
+    if (pid == 0) {
+        personality(ADDR_NO_RANDOMIZE);
+        execute_debugee(prog);
+    } else if (pid >= 1) {
+        std::cout << "Started debugging process " 
+        << pid << '\n';
+        debugger dbg{prog, pid};
+        dbg.run();
+    }
+}
+	\end{lstlisting}
 	С функции main начинается выполнение программы. В ней происходит саздание нового процесса с помощью системного вызова fork().это приводит к тому, что программа разделяется на два процесса. 
-	\item {\bf fork}\\
-	
-	Когда выполнение программы происходит в дочернем процессе, fork возвращает 0, иначе - идентификатор дочернего процесса. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 	\item  {\bf execute\_debugee}
-	\begin{figure}[h!]
-		\center{\includegraphics[scale=0.9]{2}}
-		\caption{}
-	\end{figure}
-	\\
+	\begin{lstlisting}
+void execute_debugee(const std::string &prog_name) {
+    if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {
+        std::cerr << "Error in ptrace\n";
+        return;
+    }
+    execl(prog_name.c_str(), prog_name.c_str(),
+      nullptr);
+}
+	\end{lstlisting}
 	В функции execute\_debugee происходит вызов ptrace, который указывает, что текущий процесс должен позволить своему родителю отслеживать его. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 	\item  {\bf run} 
-	\begin{figure}[h!]
-		\center{\includegraphics[scale=0.9]{3}}
-		\caption{}
-	\end{figure}
-	\\
+	\noindent
+    \begin{lstlisting}
+void debugger::run() {
+    wait_for_signal();
+    initialise_load_address();
+	
+    char *line = nullptr;
+	
+    while (!end_of_program && 
+      (line = linenoise("MEGAdbg> ")) != nullptr) {
+            handle_command(line);
+            linenoiseHistoryAdd(line);
+            linenoiseFree(line);
+    }
+}
+	\end{lstlisting}
 	В функции происходит ожидание сигнала от родительского процесса и инициализация адреса отлаживаемой программы. Далее запускается цикл, в котором запрашиваются команды у пользователя.
-	\item {\bf handle\_command} \\
-	
-	В функции происходит обработка пользовательских команд. 
-	\begin{table}[h]
-		\begin{center}
-			\begin{tabular}{|p{4cm}|p{6cm}|}
-				\hline 
-				Пользовательские команды & Вызов функций \\ \hline
-				cont  & continue\_execution \\ \hline
-				break & set\_breakpoint\_at\_address  \\ \hline
-				step & step\_in \\ \hline
-				next & step\_over \\ \hline
-				finish & step\_out \\ \hline
-				show & print\_source  \\ \hline
-				register write & set\_register\_value  \\ \hline
-				register read & get\_register\_value  \\ \hline
-			\end{tabular}
-		\end{center}
-	\end{table}
-	\item {\bf continue\_execution}
-	\begin{figure}[h!]
-		\center{\includegraphics[scale=0.9]{4}}
-		\caption{}
-	\end{figure}
-	\\
+	В функции происходит обработка пользовательских команд c помощью функции \verb:handle_command:.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\item {\bf continue\_execution}\\
 	В функции происходит вызов ptrace, чтобы сообщить процессору о продолжении выполнения программы. Затем происходит ожидание сигнала от дочернего процесса. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\item  {\bf step\_over} \\
-	
 	Функция отвечает за шаг с обходом. Концептуально, необходимо поставить точку останова на следующую строку исходного кода. Но это может быть не та строка, если текущее выполнение программы происходит в цикле. По этой причине, необходимо установить точки останова на каждую строку текущей функции. После, продолжить выполнение до последней точки останова и удалить все поставленные точки. 
 	\item {\bf step\_out} \\
-	
 	Данная функция предназначена для выполнения команды “finish”. В функции происходит установка точки останова на адрес возврата, переход на установленную точку и ее удаление. 
-	\item {\bf set\_breakpoint\_at\_address}
-	\begin{figure}[h!]
-		\center{\includegraphics[scale=0.7]{5}}
-		\caption{}
-	\end{figure}
-	\\
+	\item {\bf set\_breakpoint\_at\_address}\\
 	Функция устанавливает точку останова по заданному адресу. Для этого создается новая точка, включается и записывается в массив.
 	\item  
-	{\bf set\_breakpoint\_at\_source\_line}
-	\begin{figure}[h!]
-		\center{\includegraphics[scale=0.7]{6}}
-		\caption{}
-	\end{figure}
-	\\
-	
+	{\bf set\_breakpoint\_at\_source\_line}\\
 	Функция устанавливает точку останова по заданному номеру строки файле с исходным кодом. В функции происходит получение адреса строки и установка точки останова по этому адресу. 
 	\item 
-   {\bf set\_breakpoint\_at\_function}
-   \begin{figure}[h!]
-      \center{\includegraphics[scale=0.7]{7}}
-      \caption{}
-    \end{figure}
-     \\
-
-Функция устанавливает точку останова по заданному названию функции. В функции происходит получение адреса функции и установка точки останова по этому адресу.
+    {\bf set\_breakpoint\_at\_function}\\
+	Функция устанавливает точку останова по заданному названию функции. В функции происходит получение адреса функции и установка точки останова по этому адресу.
 	\end{enumerate}
 
 \chapter{Пример работы программы}
-\noindent Исходный код отлаживаемого приложения: 
-\begin{figure}[h!]
-	\center{\includegraphics[scale=0.7]{start}}
-	\caption{}
+\begin{figure}[h]
+	\centering
+	\begin{singlespacing}
+		\lstinputlisting[language=C++,frame=single]{example.cpp}
+	\end{singlespacing}
+	\caption{Исходный код отлаживаемого приложения}
 \end{figure}
 
-\noindent Старт:
-\begin{figure}[h!]
-	\center{\includegraphics[scale=1]{Старт}}
-	\caption{}
+\begin{figure}[h]
+	\centering
+	\begin{singlespacing}
+		\lstinputlisting[frame=single]{test_1.log}
+	\end{singlespacing}
+	\caption{Запуск отладчика}
 \end{figure}
 
-\newpage 
-
-\noindent Вывод исходного кода:
-\begin{figure}[h!]
-	\center{\includegraphics[scale=0.8]{вывод}}
-	\caption{}
+\begin{figure}[h]
+	\centering
+	\begin{singlespacing}
+		\lstinputlisting[frame=single]{test_2.log}
+	\end{singlespacing}
+	\caption{Вывод исходного кода}
 \end{figure}
 
-\noindent Установка точки останова по названию функции:
-\begin{figure}[h!]
-	\center{\includegraphics[scale=1.2]{Установка точки останова по названию функции}}
-	\caption{}
+\begin{figure}[h]
+	\centering
+	\begin{singlespacing}
+		\lstinputlisting[frame=single]{test_3.log}
+	\end{singlespacing}
+	\caption{Установка точки останова по названию функции}
 \end{figure}
 
-\newpage 
-
-\noindent Переход на точку останова: 
-\begin{figure}[h!]
-	\center{\includegraphics[scale=1.2]{Переход на точку останова}}
-	\caption{}
+\begin{figure}[h]
+	\centering
+	\begin{singlespacing}
+		\lstinputlisting[frame=single]{test_4.log}
+	\end{singlespacing}
+	\caption{Переход на точку останова}
 \end{figure}
 
-\noindent Step: 
-\begin{figure}[h!]
-	\center{\includegraphics[scale=1.2]{Шаг}}
-	\caption{}
+\begin{figure}[h]
+	\centering
+	\begin{singlespacing}
+		\lstinputlisting[frame=single]{test_5.log}
+	\end{singlespacing}
+	\caption{Шаг с заходом}
 \end{figure}
 
-\newpage 
-
-\noindent Step out:
-\begin{figure}[h!]
-	\center{\includegraphics[scale=1.2]{step_out}}
-	\caption{}
+\begin{figure}[h]
+	\centering
+	\begin{singlespacing}
+		\lstinputlisting[frame=single]{test_6.log}
+	\end{singlespacing}
+	\caption{Шаг с выходом}
 \end{figure}
 
-\noindent Step over: 
-\begin{figure}[h!]
-	\center{\includegraphics[scale=1.2]{step_over}}
-	\caption{}
+\begin{figure}[h]
+	\centering
+	\begin{singlespacing}
+		\lstinputlisting[frame=single]{test_7.log}
+	\end{singlespacing}
+	\caption{Шаг без захода}
 \end{figure}
 
-\newpage 
-
-\noindent Конец выполнения программы: 
-\begin{figure}[h!]
-	\center{\includegraphics[scale=1.2]{Конец выполнения программы}}
-	\caption{}
-\end{figure}
 
 \chapter*{Заключение}
 Таким образом, при написании программы были получены необходимые представления об устройстве отладчиков. Также получены навыки работы с системными вызовами ptrace, технологией программных точек останова, и различными вспомогательными средствами, такими как Clion, Cmake и GCC. Эти навыки помогут в дальнейшем при написании и отладке любого кода, а также для анализа работы различных, уже существующих, отладчиков, что позволит значительно улучшить качество будущей профессиональной деятельности.

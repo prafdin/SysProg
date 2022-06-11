@@ -1,0 +1,12 @@
+MEGAdbg> break a
+Set breakpoint at address 0x5555555545fe
+MEGAdbg> cont
+Hit breakpoint at address 0x5555555545fe
+
+  int a(){
+	  int a = 1;
+	  int b = 2;
+	  return a + b;
+  }
+  
+MEGAdbg>
