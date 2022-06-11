@@ -64,6 +64,7 @@
 
 \usepackage{caption2}
 
+
 \begin{document}
 \def\figurename{Рисунок}
 \renewcommand{\captionlabeldelim}{~--}
@@ -219,7 +220,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \tableofcontents
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter*{Введение}
+\chapter{Введение}
 Отладчики — один из самых ценных инструментов в наборе любого разработчика. Эта компьютерная программа предназначена для поиска ошибок в других программах и ядрах операционных систем. Отладчик позволяет выполнять трассировку, отслеживать, устанавливать или изменять значения переменных в процессе выполнения кода, устанавливать и удалять точки останова.
 Отладчики бывают самыми разными, на данный момент существует множество отладчиков, в которых реализуется различный функционал в зависимости от задач, языков программирования и функций, стоящих перед разработчиком. В качестве примеров популярных на данный момент отладчиков можно привести DBX, Dtrace, GNU Debugger и так далее.\\
 
@@ -506,10 +507,10 @@ void debugger::run() {
 \end{figure}
 
 
-\chapter*{Заключение}
+\chapter{Заключение}
 Таким образом, при написании программы были получены необходимые представления об устройстве отладчиков. Также получены навыки работы с системными вызовами ptrace, технологией программных точек останова, и различными вспомогательными средствами, такими как Clion, Cmake и GCC. Эти навыки помогут в дальнейшем при написании и отладке любого кода, а также для анализа работы различных, уже существующих, отладчиков, что позволит значительно улучшить качество будущей профессиональной деятельности.
 
-\chapter*{Источники}
+\chapter{Источники}
 \begin{enumerate}
 	\item Ptrace: \url{ https://www.kernel.org/doc/html/latest/powerpc/ptrace.html}
 	\item ELF: \url{ http://www.skyfree.org/linux/references/ELF_Format.pdf}
@@ -519,4 +520,26 @@ void debugger::run() {
 	\item Библиотека libelfin \url {https://github.com/aclements/libelfin}
 	\item Библиотека linenoise \url {https://github.com/antirez/linenoise}
 \end{enumerate}
+
+
+
+
+\appendix
+\chapter{Код программы}
+\centerline{Код класса debugger}
+\lstinputlisting[frame=single,breaklines=true]{../src/debugger.h}
+\lstinputlisting[frame=single,breaklines=true]{../src/debugger.cpp}
+\centerline{Код класса breakpoint}
+\lstinputlisting[frame=single,breaklines=true]{../src/breakpoint.h}
+\lstinputlisting[frame=single,breaklines=true]{../src/breakpoint.cpp}
+\centerline{Код класса ArgParser}
+\lstinputlisting[frame=single,breaklines=true]{../src/parser.h}
+\lstinputlisting[frame=single,breaklines=true]{../src/parser.cpp}
+\centerline{Код utility}
+\lstinputlisting[frame=single,breaklines=true]{../src/utility.h}
+\lstinputlisting[frame=single,breaklines=true]{../src/utility.cpp}
+\centerline{Вспомогательный код}
+\lstinputlisting[frame=single,breaklines=true]{../src/main.cpp}
+\lstinputlisting[frame=single,breaklines=true]{../src/registers.h}
+
 \end{document}
